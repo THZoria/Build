@@ -1,0 +1,31 @@
+name: Build
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout du dépôt
+        uses: actions/checkout@v2
+
+      - name: Configuration avec CMake
+        run: |
+          mkdir build
+          cd build
+          cmake ..
+
+      - name: Compilation du projet
+        run: |
+          cd build
+          cmake --build .
+
+      - name: Exécution des tests
+        run: |
+          cd build
+          ctest
