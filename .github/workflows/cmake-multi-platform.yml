@@ -1,4 +1,4 @@
-name: Build
+name: Build Citron Project
 
 on:
   push:
@@ -12,11 +12,15 @@ jobs:
 
     steps:
       - name: Checkout du dépôt
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
-      - name: Configuration avec CMake
+      # Optionnel : installer les dépendances nécessaires si elles ne sont pas déjà présentes sur l'image
+      - name: Installer les outils de build
+        run: sudo apt-get update && sudo apt-get install -y cmake build-essential
+
+      - name: Configuration du projet
         run: |
-          mkdir build
+          mkdir -p build
           cd build
           cmake ..
 
@@ -25,7 +29,8 @@ jobs:
           cd build
           cmake --build .
 
+      # Si vous avez défini des tests avec CTest, cette étape les exécutera
       - name: Exécution des tests
         run: |
           cd build
-          ctest
+          ctest --output-on-failure
