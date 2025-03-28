@@ -11,10 +11,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout du dépôt
+      - name: Checkout du dépôt avec sous-modules
         uses: actions/checkout@v3
+        with:
+          submodules: true
 
-      # Optionnel : installer les dépendances nécessaires si elles ne sont pas déjà présentes sur l'image
       - name: Installer les outils de build
         run: sudo apt-get update && sudo apt-get install -y cmake build-essential
 
@@ -29,7 +30,6 @@ jobs:
           cd build
           cmake --build .
 
-      # Si vous avez défini des tests avec CTest, cette étape les exécutera
       - name: Exécution des tests
         run: |
           cd build
