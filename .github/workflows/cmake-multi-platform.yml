@@ -11,22 +11,20 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Récupérer le dépôt et ses sous-modules
       - name: Checkout du dépôt avec sous-modules
         uses: actions/checkout@v3
         with:
           submodules: true
+          fetch-depth: 0
 
       - name: Initialiser les sous-modules
         run: git submodule update --init --recursive
 
-      # Installer les outils nécessaires (cmake, build-essential, git)
       - name: Installer les outils de build
         run: |
           sudo apt-get update
           sudo apt-get install -y cmake build-essential git
 
-      # Télécharger et bootstrapper vcpkg
       - name: Installer vcpkg
         run: |
           git clone https://github.com/microsoft/vcpkg.git
@@ -34,24 +32,20 @@ jobs:
           ./bootstrap-vcpkg.sh
           cd ..
 
-      # Installer les dépendances via vcpkg en mode manifest
       - name: Installer les dépendances vcpkg
         run: ./vcpkg/vcpkg install --triplet x64-linux
 
-      # Configurer le projet en passant le fichier toolchain de vcpkg à CMake
       - name: Configuration du projet
         run: |
           mkdir -p build
           cd build
           cmake -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/vcpkg/scripts/buildsystems/vcpkg.cmake ..
 
-      # Compiler le projet
       - name: Compilation du projet
         run: |
           cd build
           cmake --build .
 
-      # Exécuter les tests si définis (par exemple via CTest)
       - name: Exécution des tests
         run: |
           cd build
